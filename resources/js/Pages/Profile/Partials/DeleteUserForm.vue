@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -6,35 +6,43 @@ import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
-import { nextTick, ref } from 'vue';
 
-const confirmingUserDeletion = ref(false);
-const passwordInput = ref(null);
+export default {
+    components: { DangerButton, InputError, InputLabel, Modal, SecondaryButton, TextInput },
 
-const form = useForm({
-    password: '',
-});
+    setup() {
+        const form = useForm({ password: '' });
 
-const confirmUserDeletion = () => {
-    confirmingUserDeletion.value = true;
+        return { form };
+    },
 
-    nextTick(() => passwordInput.value.focus());
-};
+    data() {
+        return {
+            confirmingUserDeletion: false,
+        };
+    },
 
-const deleteUser = () => {
-    form.delete(route('profile.destroy'), {
-        preserveScroll: true,
-        onSuccess: () => closeModal(),
-        onError: () => passwordInput.value.focus(),
-        onFinish: () => form.reset(),
-    });
-};
+    methods: {
+        confirmUserDeletion() {
+            this.confirmingUserDeletion = true;
+            this.$nextTick(() => this.$refs.passwordInput.focus());
+        },
 
-const closeModal = () => {
-    confirmingUserDeletion.value = false;
+        deleteUser() {
+            this.form.delete(route('profile.destroy'), {
+                preserveScroll: true,
+                onSuccess: () => this.closeModal(),
+                onError: () => this.$refs.passwordInput.focus(),
+                onFinish: () => this.form.reset(),
+            });
+        },
 
-    form.clearErrors();
-    form.reset();
+        closeModal() {
+            this.confirmingUserDeletion = false;
+            this.form.clearErrors();
+            this.form.reset();
+        },
+    },
 };
 </script>
 
@@ -56,9 +64,7 @@ const closeModal = () => {
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
-                <h2
-                    class="text-lg font-medium text-gray-900"
-                >
+                <h2 class="text-lg font-medium text-gray-900">
                     Are you sure you want to delete your account?
                 </h2>
 
@@ -69,11 +75,7 @@ const closeModal = () => {
                 </p>
 
                 <div class="mt-6">
-                    <InputLabel
-                        for="password"
-                        value="Password"
-                        class="sr-only"
-                    />
+                    <InputLabel for="password" value="Password" class="sr-only" />
 
                     <TextInput
                         id="password"

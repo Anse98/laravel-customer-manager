@@ -1,31 +1,48 @@
-<script setup>
+<script>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
+export default {
+    components: { GuestLayout, Head, Link },
 
-const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
+    props: {
+        canResetPassword: {
+            type: Boolean,
+        },
+        status: {
+            type: String,
+        },
+    },
 
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+    setup() {
+        const form = useForm({
+            email: '',
+            password: '',
+            remember: false,
+        });
+
+        return { form };
+    },
+
+    methods: {
+        submit() {
+            this.form.post(route('login'), {
+                onFinish: () => this.form.reset('password'),
+            });
+        },
+    },
 };
 </script>
 
 <template>
     <GuestLayout>
+        <template #topRight>
+            <span class="text-sm text-gray-500">First time here?</span>
+            <Link :href="route('register')"
+                class="ml-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition">
+                Register
+            </Link>
+        </template>
 
         <Head title="Log in" />
 
@@ -58,10 +75,6 @@ const submit = () => {
                     <label for="password" class="block text-sm font-medium text-gray-700">
                         Password
                     </label>
-                    <Link v-if="canResetPassword" :href="route('password.request')"
-                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition">
-                        Forgot your password?
-                    </Link>
                 </div>
                 <input id="password" v-model="form.password" type="password" required autocomplete="current-password"
                     placeholder="••••••••"

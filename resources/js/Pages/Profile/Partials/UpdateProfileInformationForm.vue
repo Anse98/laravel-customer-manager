@@ -1,25 +1,34 @@
-<script setup>
+<script>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
+export default {
+    components: { InputError, InputLabel, PrimaryButton, TextInput, Link },
 
-const user = usePage().props.auth.user;
+    props: {
+        mustVerifyEmail: {
+            type: Boolean,
+        },
+        status: {
+            type: String,
+        },
+    },
 
-const form = useForm({
-    name: user.name,
-    email: user.email,
-});
+    setup() {
+        const page = usePage();
+        const user = page.props.auth.user;
+
+        const form = useForm({
+            name: user.name,
+            email: user.email,
+        });
+
+        return { form, user };
+    },
+};
 </script>
 
 <template>
@@ -99,10 +108,7 @@ const form = useForm({
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
-                    >
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">
                         Saved.
                     </p>
                 </Transition>

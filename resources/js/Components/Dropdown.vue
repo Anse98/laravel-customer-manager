@@ -1,47 +1,58 @@
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+<script>
+export default {
+    props: {
+        align: {
+            type: String,
+            default: 'right',
+        },
+        width: {
+            type: String,
+            default: '48',
+        },
+        contentClasses: {
+            type: String,
+            default: 'py-1 bg-white',
+        },
+    },
 
-const props = defineProps({
-    align: {
-        type: String,
-        default: 'right',
+    data() {
+        return {
+            open: false,
+        };
     },
-    width: {
-        type: String,
-        default: '48',
-    },
-    contentClasses: {
-        type: String,
-        default: 'py-1 bg-white',
-    },
-});
 
-const closeOnEscape = (e) => {
-    if (open.value && e.key === 'Escape') {
-        open.value = false;
-    }
+    computed: {
+        widthClass() {
+            return { 48: 'w-48' }[this.width.toString()];
+        },
+
+        alignmentClasses() {
+            if (this.align === 'left') {
+                return 'ltr:origin-top-left rtl:origin-top-right start-0';
+            } else if (this.align === 'right') {
+                return 'ltr:origin-top-right rtl:origin-top-left end-0';
+            } else {
+                return 'origin-top';
+            }
+        },
+    },
+
+    mounted() {
+        document.addEventListener('keydown', this.closeOnEscape);
+    },
+
+    unmounted() {
+        document.removeEventListener('keydown', this.closeOnEscape);
+    },
+
+    methods: {
+        closeOnEscape(e) {
+            if (this.open && e.key === 'Escape') {
+                this.open = false;
+            }
+        },
+    },
 };
-
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
-
-const widthClass = computed(() => {
-    return {
-        48: 'w-48',
-    }[props.width.toString()];
-});
-
-const alignmentClasses = computed(() => {
-    if (props.align === 'left') {
-        return 'ltr:origin-top-left rtl:origin-top-right start-0';
-    } else if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
-    } else {
-        return 'origin-top';
-    }
-});
-
-const open = ref(false);
 </script>
 
 <template>

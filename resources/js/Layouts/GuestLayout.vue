@@ -1,4 +1,5 @@
-<script setup>
+<script>
+export default {};
 </script>
 
 <template>
@@ -45,8 +46,13 @@
         </div>
 
         <!-- Right panel: form -->
-        <div class="flex w-full lg:w-1/2 flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white">
-            <div class="mx-auto w-full max-w-md">
+        <div class="flex w-full lg:w-1/2 flex-col px-8 sm:px-16 lg:px-24 bg-white">
+            <!-- Top-right slot (e.g. Register link) -->
+            <div class="flex justify-end pt-6">
+                <slot name="topRight" />
+            </div>
+
+            <div class="mx-auto w-full max-w-md my-auto">
                 <!-- Mobile logo -->
                 <div class="flex items-center gap-2 mb-10 lg:hidden">
                     <div class="h-8 w-8 rounded-lg bg-indigo-500 flex items-center justify-center">

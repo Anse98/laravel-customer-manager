@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -6,14 +6,22 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
-const form = useForm({
-    password: '',
-});
+export default {
+    components: { GuestLayout, Head, InputError, InputLabel, PrimaryButton, TextInput },
 
-const submit = () => {
-    form.post(route('password.confirm'), {
-        onFinish: () => form.reset(),
-    });
+    setup() {
+        const form = useForm({ password: '' });
+
+        return { form };
+    },
+
+    methods: {
+        submit() {
+            this.form.post(route('password.confirm'), {
+                onFinish: () => this.form.reset(),
+            });
+        },
+    },
 };
 </script>
 

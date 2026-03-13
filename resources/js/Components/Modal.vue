@@ -1,77 +1,82 @@
-<script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-
-const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false,
+<script>
+export default {
+    props: {
+        show: {
+            type: Boolean,
+            default: false,
+        },
+        maxWidth: {
+            type: String,
+            default: '2xl',
+        },
+        closeable: {
+            type: Boolean,
+            default: true,
+        },
     },
-    maxWidth: {
-        type: String,
-        default: '2xl',
+
+    emits: ['close'],
+
+    data() {
+        return {
+            showSlot: this.show,
+        };
     },
-    closeable: {
-        type: Boolean,
-        default: true,
+
+    computed: {
+        maxWidthClass() {
+            return {
+                sm: 'sm:max-w-sm',
+                md: 'sm:max-w-md',
+                lg: 'sm:max-w-lg',
+                xl: 'sm:max-w-xl',
+                '2xl': 'sm:max-w-2xl',
+            }[this.maxWidth];
+        },
     },
-});
 
-const emit = defineEmits(['close']);
-const dialog = ref();
-const showSlot = ref(props.show);
-
-watch(
-    () => props.show,
-    () => {
-        if (props.show) {
-            document.body.style.overflow = 'hidden';
-            showSlot.value = true;
-
-            dialog.value?.showModal();
-        } else {
-            document.body.style.overflow = '';
-
-            setTimeout(() => {
-                dialog.value?.close();
-                showSlot.value = false;
-            }, 200);
-        }
+    watch: {
+        show(value) {
+            if (value) {
+                document.body.style.overflow = 'hidden';
+                this.showSlot = true;
+                this.$refs.dialog?.showModal();
+            } else {
+                document.body.style.overflow = '';
+                setTimeout(() => {
+                    this.$refs.dialog?.close();
+                    this.showSlot = false;
+                }, 200);
+            }
+        },
     },
-);
 
-const close = () => {
-    if (props.closeable) {
-        emit('close');
-    }
+    mounted() {
+        document.addEventListener('keydown', this.closeOnEscape);
+    },
+
+    unmounted() {
+        document.removeEventListener('keydown', this.closeOnEscape);
+        document.body.style.overflow = '';
+    },
+
+    methods: {
+        close() {
+            if (this.closeable) {
+                this.$emit('close');
+            }
+        },
+
+        closeOnEscape(e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                if (this.show) {
+                    this.close();
+                }
+            }
+        },
+    },
 };
-
-const closeOnEscape = (e) => {
-    if (e.key === 'Escape') {
-        e.preventDefault();
-
-        if (props.show) {
-            close();
-        }
-    }
-};
-
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-
-onUnmounted(() => {
-    document.removeEventListener('keydown', closeOnEscape);
-
-    document.body.style.overflow = '';
-});
-
-const maxWidthClass = computed(() => {
-    return {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-    }[props.maxWidth];
-});
 </script>
 
 <template>
@@ -96,9 +101,7 @@ const maxWidthClass = computed(() => {
                     class="fixed inset-0 transform transition-all"
                     @click="close"
                 >
-                    <div
-                        class="absolute inset-0 bg-gray-500 opacity-75"
-                    />
+                    <div class="absolute inset-0 bg-gray-500 opacity-75" />
                 </div>
             </Transition>
 

@@ -1,10 +1,12 @@
-<script setup>
-defineProps({
-    type: {
-        type: String,
-        default: 'button',
+<script>
+export default {
+    props: {
+        type: {
+            type: String,
+            default: 'button',
+        },
     },
-});
+};
 </script>
 
 <template>

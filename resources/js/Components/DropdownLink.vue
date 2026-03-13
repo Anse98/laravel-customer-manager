@@ -1,12 +1,16 @@
-<script setup>
+<script>
 import { Link } from '@inertiajs/vue3';
 
-defineProps({
-    href: {
-        type: String,
-        required: true,
+export default {
+    components: { Link },
+
+    props: {
+        href: {
+            type: String,
+            required: true,
+        },
     },
-});
+};
 </script>
 
 <template>
