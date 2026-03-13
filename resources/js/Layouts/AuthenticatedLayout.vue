@@ -1,5 +1,4 @@
 <script>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
@@ -8,7 +7,6 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     components: {
-        ApplicationLogo,
         Dropdown,
         DropdownLink,
         NavLink,
@@ -27,17 +25,21 @@ export default {
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
-            <nav class="border-b border-gray-100 bg-white">
-                <!-- Primary Navigation Menu -->
+            <nav class="border-b border-gray-200 bg-white shadow-sm">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
+
+                        <!-- Left side: logo + nav links -->
                         <div class="flex">
-                            <!-- Logo -->
+                            <!-- Brand logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                <Link :href="route('dashboard')" class="flex items-center gap-2.5">
+                                    <div class="h-8 w-8 rounded-lg bg-indigo-500 flex items-center justify-center">
+                                        <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-gray-900 font-semibold text-sm tracking-tight">Customer Manager</span>
                                 </Link>
                             </div>
 
@@ -52,20 +54,25 @@ export default {
                             </div>
                         </div>
 
+                        <!-- Right side: user dropdown -->
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                class="inline-flex items-center gap-2 rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-600 transition duration-150 ease-in-out hover:text-indigo-600 focus:outline-none"
                                             >
+                                                <!-- User avatar placeholder -->
+                                                <span class="h-7 w-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xs">
+                                                    {{ $page.props.auth.user.name.charAt(0).toUpperCase() }}
+                                                </span>
+
                                                 {{ $page.props.auth.user.name }}
 
                                                 <svg
-                                                    class="-me-0.5 ms-2 h-4 w-4"
+                                                    class="h-4 w-4 text-gray-400"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     viewBox="0 0 20 20"
                                                     fill="currentColor"
@@ -96,18 +103,13 @@ export default {
                             </div>
                         </div>
 
-                        <!-- Hamburger -->
+                        <!-- Hamburger (mobile) -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
                                 @click="showingNavigationDropdown = !showingNavigationDropdown"
                                 class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                             >
-                                <svg
-                                    class="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
+                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
                                         :class="{
                                             hidden: showingNavigationDropdown,
@@ -153,12 +155,17 @@ export default {
 
                     <!-- Responsive Settings Options -->
                     <div class="border-t border-gray-200 pb-1 pt-4">
-                        <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
+                        <div class="px-4 flex items-center gap-3">
+                            <span class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-sm">
+                                {{ $page.props.auth.user.name.charAt(0).toUpperCase() }}
+                            </span>
+                            <div>
+                                <div class="text-base font-medium text-gray-800">
+                                    {{ $page.props.auth.user.name }}
+                                </div>
+                                <div class="text-sm font-medium text-gray-500">
+                                    {{ $page.props.auth.user.email }}
+                                </div>
                             </div>
                         </div>
 
@@ -179,8 +186,8 @@ export default {
             </nav>
 
             <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <header class="bg-white shadow-sm border-b border-gray-200" v-if="$slots.header">
+                <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
