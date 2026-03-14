@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
+use App\Models\Customer;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,5 +34,19 @@ class CustomerController extends Controller
         auth()->user()->customers()->create($request->validated());
 
         return redirect()->route('dashboard')->with('success', 'Customer created successfully.');
+    }
+
+    /**
+     * Update an existing customer. Scoped to the authenticated user to prevent
+     * unauthorized access to other users' customers.
+     */
+    public function update(UpdateCustomerRequest $request, Customer $customer): RedirectResponse
+    {
+        // Ensure the customer belongs to the authenticated user
+        abort_if($customer->user_id !== auth()->id(), 403);
+
+        $customer->update($request->validated());
+
+        return redirect()->route('dashboard')->with('success', 'Customer updated successfully.');
     }
 }

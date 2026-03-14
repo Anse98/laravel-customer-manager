@@ -1,11 +1,11 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import CreateCustomerModal from '@/Components/CreateCustomerModal.vue';
+import CustomerModal from '@/Components/CustomerModal.vue';
 import { Head } from '@inertiajs/vue3';
 
 export default {
-    components: { AuthenticatedLayout, Head, PrimaryButton, CreateCustomerModal },
+    components: { AuthenticatedLayout, Head, PrimaryButton, CustomerModal },
 
     props: {
         customers: {
@@ -16,7 +16,8 @@ export default {
 
     data() {
         return {
-            showCreateModal: false,
+            showModal: false,
+            selectedCustomer: null,
         };
     },
 
@@ -33,6 +34,16 @@ export default {
                 month: 'short',
                 day: 'numeric',
             });
+        },
+
+        openModal(customer = null) {
+            this.selectedCustomer = customer;
+            this.showModal = true;
+        },
+
+        closeModal() {
+            this.showModal = false;
+            this.selectedCustomer = null;
         },
     },
 };
@@ -51,7 +62,7 @@ export default {
                     <span class="text-sm text-gray-500">
                         {{ customers.length }} {{ customers.length === 1 ? 'customer' : 'customers' }}
                     </span>
-                    <PrimaryButton @click="showCreateModal = true">
+                    <PrimaryButton @click="openModal()">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
@@ -78,7 +89,7 @@ export default {
                     <p class="mt-1 text-sm text-gray-500">
                         You haven't registered any customers yet. Start by adding your first one.
                     </p>
-                    <PrimaryButton class="mt-6" @click="showCreateModal = true">
+                    <PrimaryButton class="mt-6" @click="openModal()">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
@@ -105,6 +116,9 @@ export default {
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hidden lg:table-cell">
                                     Added
+                                </th>
+                                <th scope="col" class="relative px-6 py-3">
+                                    <span class="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
@@ -152,6 +166,19 @@ export default {
                                 <td class="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
                                     <span class="text-sm text-gray-500">{{ formatDate(customer.created_at) }}</span>
                                 </td>
+
+                                <!-- Actions -->
+                                <td class="px-6 py-4 whitespace-nowrap text-right">
+                                    <button
+                                        @click="openModal(customer)"
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+                                    >
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        Edit
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -160,10 +187,11 @@ export default {
             </div>
         </div>
 
-        <!-- Create customer modal -->
-        <CreateCustomerModal
-            :show="showCreateModal"
-            @close="showCreateModal = false"
+        <!-- Unified create/edit modal -->
+        <CustomerModal
+            :show="showModal"
+            :customer="selectedCustomer"
+            @close="closeModal"
         />
     </AuthenticatedLayout>
 </template>
