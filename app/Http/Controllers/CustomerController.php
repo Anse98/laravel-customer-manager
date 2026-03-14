@@ -31,6 +31,6 @@ class CustomerController extends Controller
     {
         auth()->user()->customers()->create($request->validated());
 
-        return redirect()->route('dashboard');
+        return redirect()->route('dashboard')->with('success', 'Customer created successfully.');
     }
 }

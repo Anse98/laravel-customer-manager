@@ -3,6 +3,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import Toast from '@/Components/Toast.vue';
 import { Link } from '@inertiajs/vue3';
 
 export default {
@@ -11,6 +12,7 @@ export default {
         DropdownLink,
         NavLink,
         ResponsiveNavLink,
+        Toast,
         Link,
     },
 
@@ -197,5 +199,8 @@ export default {
                 <slot />
             </main>
         </div>
+
+        <!-- Global toast notification -->
+        <Toast />
     </div>
 </template>
