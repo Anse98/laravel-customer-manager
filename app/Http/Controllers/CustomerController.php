@@ -27,6 +27,19 @@ class CustomerController extends Controller
     }
 
     /**
+     * Display the full detail page of a single customer.
+     * Scoped to the authenticated user to prevent unauthorized access.
+     */
+    public function show(Customer $customer): Response
+    {
+        abort_if($customer->user_id !== auth()->id(), 403);
+
+        return Inertia::render('Customers/Show', [
+            'customer' => $customer,
+        ]);
+    }
+
+    /**
      * Store a newly created customer for the authenticated user.
      */
     public function store(StoreCustomerRequest $request): RedirectResponse

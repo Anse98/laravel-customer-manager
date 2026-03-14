@@ -2,10 +2,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CustomerModal from '@/Components/CustomerModal.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 export default {
-    components: { AuthenticatedLayout, Head, PrimaryButton, CustomerModal },
+    components: { AuthenticatedLayout, Head, PrimaryButton, CustomerModal, Link },
 
     props: {
         customers: {
@@ -130,14 +130,14 @@ export default {
                             >
                                 <!-- Name + avatar -->
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center gap-3">
+                                    <Link :href="route('customers.show', customer.id)" class="flex items-center gap-3 group">
                                         <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xs shrink-0">
                                             {{ customer.first_name.charAt(0).toUpperCase() }}{{ customer.last_name.charAt(0).toUpperCase() }}
                                         </div>
-                                        <p class="text-sm font-medium text-gray-900">
+                                        <p class="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition">
                                             {{ customer.first_name }} {{ customer.last_name }}
                                         </p>
-                                    </div>
+                                    </Link>
                                 </td>
 
                                 <!-- Email -->
