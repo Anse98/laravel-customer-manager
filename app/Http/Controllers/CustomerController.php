@@ -50,6 +50,18 @@ class CustomerController extends Controller
     }
 
     /**
+     * Delete a customer. Scoped to the authenticated user.
+     */
+    public function destroy(Customer $customer): RedirectResponse
+    {
+        abort_if($customer->user_id !== auth()->id(), 403);
+
+        $customer->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Customer deleted successfully.');
+    }
+
+    /**
      * Update an existing customer. Scoped to the authenticated user to prevent
      * unauthorized access to other users' customers.
      */

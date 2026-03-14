@@ -1,11 +1,12 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CustomerModal from '@/Components/CustomerModal.vue';
+import ConfirmModal from '@/Components/ConfirmModal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 export default {
-    components: { AuthenticatedLayout, Head, Link, CustomerModal, PrimaryButton },
+    components: { AuthenticatedLayout, Head, Link, CustomerModal, ConfirmModal, PrimaryButton },
 
     props: {
         customer: {
@@ -14,9 +15,15 @@ export default {
         },
     },
 
+    setup() {
+        const deleteForm = useForm({});
+        return { deleteForm };
+    },
+
     data() {
         return {
             showEditModal: false,
+            showConfirmModal: false,
         };
     },
 
@@ -34,6 +41,17 @@ export default {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
+            });
+        },
+    },
+
+    methods: {
+        confirmDelete() {
+            // After deletion the controller redirects to dashboard
+            this.deleteForm.delete(route('customers.destroy', this.customer.id), {
+                onSuccess: () => {
+                    this.showConfirmModal = false;
+                },
             });
         },
     },
@@ -63,13 +81,27 @@ export default {
                     </h2>
                 </div>
 
-                <!-- Edit button -->
-                <PrimaryButton @click="showEditModal = true">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Edit Customer
-                </PrimaryButton>
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                    <!-- Delete button -->
+                    <button
+                        @click="showConfirmModal = true"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm transition hover:border-red-300 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                    >
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </button>
+
+                    <!-- Edit button -->
+                    <PrimaryButton @click="showEditModal = true">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit Customer
+                    </PrimaryButton>
+                </div>
             </div>
         </template>
 
@@ -159,11 +191,22 @@ export default {
             </div>
         </div>
 
-        <!-- Edit modal (reusing the same unified component) -->
+        <!-- Edit modal -->
         <CustomerModal
             :show="showEditModal"
             :customer="customer"
             @close="showEditModal = false"
+        />
+
+        <!-- Delete confirmation modal -->
+        <ConfirmModal
+            :show="showConfirmModal"
+            title="Delete customer"
+            :message="`Are you sure you want to delete ${fullName}? This action cannot be undone.`"
+            confirm-label="Delete"
+            :processing="deleteForm.processing"
+            @confirm="confirmDelete"
+            @close="showConfirmModal = false"
         />
     </AuthenticatedLayout>
 </template>
